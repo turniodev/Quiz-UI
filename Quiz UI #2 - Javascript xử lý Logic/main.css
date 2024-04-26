@@ -123,10 +123,11 @@ button {
   cursor: pointer;
 }
 .quiz_question ul li.active {
-  background-color: var(--main-clr);
+  background: var(--main-clr);
   color: white;
   transition: 0.5s;
 }
+
 .quiz_question ul li span:nth-child(2) {
   margin-left: 1rem;
 }
@@ -167,12 +168,13 @@ ul {
   cursor: pointer;
   border: 2px solid transparent;
 }
-.quiz_numbers > ul > li.active {
-  border: 2px solid var(--main-clr);
-}
 .quiz_numbers > ul > li.selected {
   background-color: var(--main-clr);
   color: white;
+}
+
+.quiz_numbers > ul > li.active {
+  border: 2px solid var(--main-clr);
 }
 .quiz_numbers > ul > li.incorrect {
   background-color: red;
