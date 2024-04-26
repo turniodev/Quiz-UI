@@ -134,7 +134,7 @@ button {
 .quiz_numbers > ul {
   display: flex;
   gap: 1.5rem;
-  width: 73%;
+  width: 75%;
   overflow-x: auto;
   padding: 1px;
 }
