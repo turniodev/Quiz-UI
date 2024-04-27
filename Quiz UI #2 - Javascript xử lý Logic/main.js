@@ -140,23 +140,26 @@ const quiz = {
       quizAnswers[listSubmit[currentIndex]].classList.add("incorrect");
     }
   },
+  handleCheckResults: function () {
+    let correct = 0;
+    questions.forEach((item, index) => {
+      const result = results.find((r) => r.quiz_id === item.quiz_id);
+      if (item.answers[listSubmit[index]] === result.answer) {
+        listResults[index] = listSubmit[index];
+        correct++;
+      } else {
+        quizQuestions[index].classList.add("incorrect");
+        listResults[index] = item.answers.indexOf(result.answer);
+      }
+    });
+    isSubmit = true;
+    this.handleProgress(correct);
+  },
   handleSubmit: function () {
     quizSubmit.addEventListener("click", () => {
       const progressLen = listSubmit.filter((item) => item >= 0);
-      let correct = 0;
       if (progressLen.length === questions.length) {
-        questions.forEach((item, index) => {
-          const result = results.find((r) => r.quiz_id === item.quiz_id);
-          if (item.answers[listSubmit[index]] === result.answer) {
-            listResults[index] = listSubmit[index];
-            correct++;
-          } else {
-            quizQuestions[index].classList.add("incorrect");
-            listResults[index] = item.answers.indexOf(result.answer);
-          }
-        });
-        isSubmit = true;
-        this.handleProgress(correct);
+        this.handleCheckResults();
       } else {
         alert("Bạn chưa chọn hết đáp án");
       }
@@ -220,8 +223,8 @@ const quiz = {
     });
   },
   renderTimer: function () {
-    var timer = 15 * 60;
-
+    var timer = 15;
+    let _this = this;
     // Lấy thẻ p có id là "timer"
     var countdownElement = document.getElementById("timer");
 
@@ -243,11 +246,13 @@ const quiz = {
 
       // Giảm thời gian mỗi giây
       timer--;
-
       // Kiểm tra nếu hết thời gian
       if (timer < 0) {
-        clearInterval(intervalId);
         countdownElement.innerHTML = "Hết thời gian!";
+        _this.handleCheckResults();
+      }
+      if (isSubmit) {
+        clearInterval(intervalId);
       }
     }
 
