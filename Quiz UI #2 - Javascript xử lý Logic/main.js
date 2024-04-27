@@ -119,7 +119,8 @@ const quiz = {
       const progressLen = listSubmit.filter((item) => item >= 0);
       if (progressLen.length === questions.length) {
         results.forEach((item, index) => {
-          if (questions[index].answers[listSubmit[index]] === item.answer) {
+          const question = questions.find((q) => q.quiz_id === item.quiz_id); // Chỗ này thay vì dùng index như video thì dùng find để sau này ramdom câu hỏi nó vẫn đúng nha
+          if (question.answers[listSubmit[index]] === item.answer) {
             return;
           } else {
             quizQuestions[index].classList.add("incorrect");
