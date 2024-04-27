@@ -1,5 +1,5 @@
 // ________FAKE_DATA_______________
-const questions = [
+let questions = [
   {
     quiz_id: 1,
     question:
@@ -62,12 +62,12 @@ const results = [
     answer: "area",
   },
   {
-    quiz_id: 2,
-    answer: "guide",
-  },
-  {
     quiz_id: 3,
     answer: "reach",
+  },
+  {
+    quiz_id: 2,
+    answer: "guide",
   },
   {
     quiz_id: 4,
@@ -113,14 +113,24 @@ const quizAnswersItem = document.querySelectorAll(".quiz_answer_item");
 const quizTitle = document.querySelector("#quiz_title");
 let currentIndex = null;
 let listSubmit = [];
+function randomArray(array) {
+  return (array = array.sort(() => Math.random() - Math.random()));
+}
 const quiz = {
+  randomQuestion: function () {
+    questions = randomArray(questions);
+    questions.forEach((q) => {
+      q.answers = randomArray(q.answers);
+    });
+    console.log(questions);
+  },
   handleSubmit: function () {
     quizSubmit.addEventListener("click", () => {
       const progressLen = listSubmit.filter((item) => item >= 0);
       if (progressLen.length === questions.length) {
-        results.forEach((item, index) => {
-          const question = questions.find((q) => q.quiz_id === item.quiz_id); // Chỗ này thay vì dùng index như video thì dùng find để sau này ramdom câu hỏi nó vẫn đúng nha
-          if (question.answers[listSubmit[index]] === item.answer) {
+        questions.forEach((item, index) => {
+          const result = results.find((r) => r.quiz_id === item.quiz_id);
+          if (item.answers[listSubmit[index]] === result.answer) {
             return;
           } else {
             quizQuestions[index].classList.add("incorrect");
@@ -254,6 +264,7 @@ const quiz = {
     this.handleSubmit();
   },
   start: function () {
+    this.randomQuestion();
     this.render();
     this.handle();
   },
