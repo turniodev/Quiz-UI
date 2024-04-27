@@ -113,6 +113,8 @@ const quizAnswersItem = document.querySelectorAll(".quiz_answer_item");
 const quizTitle = document.querySelector("#quiz_title");
 let currentIndex = null;
 let listSubmit = [];
+let listResults = [];
+let isSubmit = false;
 function randomArray(array) {
   return (array = array.sort(() => Math.random() - Math.random()));
 }
@@ -124,20 +126,52 @@ const quiz = {
     });
     console.log(questions);
   },
+  renderResults: function () {
+    if (listResults[currentIndex] === listSubmit[currentIndex]) {
+      quizAnswers.forEach((item) => {
+        item.classList.remove("incorrect");
+      });
+    } else {
+      quizAnswers.forEach((item) => {
+        item.classList.remove("active");
+        item.classList.remove("incorrect");
+      });
+      quizAnswers[listResults[currentIndex]].classList.add("active");
+      quizAnswers[listSubmit[currentIndex]].classList.add("incorrect");
+    }
+  },
   handleSubmit: function () {
     quizSubmit.addEventListener("click", () => {
       const progressLen = listSubmit.filter((item) => item >= 0);
+      let correct = 0;
       if (progressLen.length === questions.length) {
         questions.forEach((item, index) => {
           const result = results.find((r) => r.quiz_id === item.quiz_id);
           if (item.answers[listSubmit[index]] === result.answer) {
-            return;
+            listResults[index] = listSubmit[index];
+            correct++;
           } else {
             quizQuestions[index].classList.add("incorrect");
+            listResults[index] = item.answers.indexOf(result.answer);
           }
         });
+        isSubmit = true;
+        this.handleProgress(correct);
       } else {
         alert("Bạn chưa chọn hết đáp án");
+      }
+    });
+  },
+  handleKeyDown: function () {
+    document.addEventListener("keydown", (e) => {
+      console.log(e.key);
+      switch (e.key) {
+        case "ArrowRight":
+          return quizNext.click();
+        case "ArrowLeft":
+          return quizPrev.click();
+        default:
+          return false;
       }
     });
   },
@@ -155,6 +189,9 @@ const quiz = {
         quizAnswers.forEach((item) => item.classList.remove("active"));
         const selected = listSubmit[currentIndex];
         selected >= 0 && quizAnswers[selected].click();
+        if (isSubmit) {
+          this.renderResults();
+        }
       });
     });
     quizQuestions[0].click();
@@ -162,12 +199,16 @@ const quiz = {
   handleAnswer: function () {
     quizAnswers.forEach((answer, index) => {
       answer.addEventListener("click", () => {
-        quizAnswers.forEach((item) => item.classList.remove("active"));
-        answer.classList.add("active");
-        quizQuestions[currentIndex].classList.add("selected");
-        listSubmit[currentIndex] = index;
-        console.log(listSubmit);
-        this.handleProgress();
+        if (!isSubmit) {
+          quizAnswers.forEach((item) => item.classList.remove("active"));
+          answer.classList.add("active");
+          quizQuestions[currentIndex].classList.add("selected");
+          listSubmit[currentIndex] = index;
+          console.log(listSubmit);
+          this.handleProgress();
+        } else {
+          return;
+        }
       });
     });
   },
@@ -231,13 +272,20 @@ const quiz = {
       quizQuestions[currentIndex].click();
     });
   },
-  handleProgress: function () {
-    const progressLen = listSubmit.filter((item) => item >= 0);
+  handleProgress: function (correct) {
     const r = quizProgress.getAttribute("r");
-    quizProgress.style = `stroke-dasharray: ${
-      (2 * Math.PI * r * progressLen.length) / questions.length
-    } 9999;`;
-    quizProgressText.innerText = `${progressLen.length}/${questions.length}`;
+    if (!isSubmit) {
+      const progressLen = listSubmit.filter((item) => item >= 0);
+      quizProgress.style = `stroke-dasharray: ${
+        (2 * Math.PI * r * progressLen.length) / questions.length
+      } 9999;`;
+      quizProgressText.innerText = `${progressLen.length}/${questions.length}`;
+    } else {
+      quizProgress.style = `stroke-dasharray: ${
+        (2 * Math.PI * r * correct) / questions.length
+      } 9999;`;
+      quizProgressText.innerText = `${correct}/${questions.length}`;
+    }
   },
   renderProgress: function () {
     quizProgress.style = `stroke-dasharray: 0 9999;`;
@@ -261,6 +309,7 @@ const quiz = {
     this.handleAnswer();
     this.handleNext();
     this.handlePrev();
+    this.handleKeyDown();
     this.handleSubmit();
   },
   start: function () {
