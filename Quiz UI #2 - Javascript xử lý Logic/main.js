@@ -119,7 +119,7 @@ function randomArray(array) {
   return (array = array.sort(() => Math.random() - Math.random()));
 }
 const quiz = {
-  randomQuestion: function () {
+  randomQuestions: function () {
     questions = randomArray(questions);
     questions.forEach((q) => {
       q.answers = randomArray(q.answers);
@@ -187,7 +187,7 @@ const quiz = {
       quizAnswers.forEach((item) => {
         item.classList.remove("incorrect");
       });
-      quizAnswers[listResults[currentIndex]].classList.add("active");
+        quizAnswers[listResults[currentIndex]].classList.add("active");
     } else {
       quizAnswers.forEach((item) => {
         item.classList.remove("active");
@@ -319,7 +319,7 @@ const quiz = {
     this.handleSubmit();
   },
   start: function () {
-    this.randomQuestion();
+    this.randomQuestions();
     this.render();
     this.handle();
   },
