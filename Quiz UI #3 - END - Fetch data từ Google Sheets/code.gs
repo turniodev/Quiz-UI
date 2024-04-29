@@ -11,7 +11,7 @@ function doGet(request) {
     questions[index] = {
       quiz_id: index + 1,
       question: item[0],
-      answers: [item[1], item[2], item[3], item[4]],
+      answers: [item[1], item[2], item[3], item[4]], // answer từ cột B đến E
     };
   });
   questions = questions.sort(() => Math.random() - Math.random());
@@ -27,10 +27,11 @@ function doPost(request) {
   const range = sheet.getDataRange();
   const values = range.getValues();
   let results = [];
+  const correctID = 5
   questions.forEach((item, index) => {
     results[index] = {
       quiz_id: item.quiz_id,
-      answer: values[item.quiz_id - 1][5],
+      answer: values[item.quiz_id - 1][correctID],
     };
   });
   return ContentService.createTextOutput(JSON.stringify(results)).setMimeType(
