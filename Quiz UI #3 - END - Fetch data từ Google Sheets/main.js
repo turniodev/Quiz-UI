@@ -31,22 +31,33 @@ const quiz = {
   },
 
   getQuestions: async function () {
-    const response = await fetch(`${API}?category=english`);
-    const data = await response.json();
-    questions = data;
-    console.log(data);
+    try {
+      const response = await fetch(`${API}?category=english`);
+      const data = await response.json();
+      questions = data;
+      console.log(data);
+    } catch (error) {
+      alert("Da xay ra loi");
+    }
   },
   getResults: async function () {
+    quizSubmit.innerText = "Đang nộp bài";
     const postData = {
       category: "english",
       questions: questions,
     };
-    const response = await fetch(API, {
-      method: "POST",
-      body: JSON.stringify(postData),
-    });
-    const results = await response.json();
-    this.handleCheckResults(results);
+    try {
+      const response = await fetch(API, {
+        method: "POST",
+        body: JSON.stringify(postData),
+      });
+      const results = await response.json();
+      this.handleCheckResults(results);
+      quizSubmit.innerText = "Kết quả";
+      quizSubmit.style = "pointer-events:none";
+    } catch (error) {
+      alert("Da xay ra loi");
+    }
   },
   renderQuestionList: function () {
     let render = "";
@@ -213,6 +224,7 @@ const quiz = {
     });
     isSubmit = true;
     this.handleProgress(correct);
+    quizQuestions[0].click();
   },
   handleKeyDown: function () {
     document.addEventListener("keydown", (e) => {
